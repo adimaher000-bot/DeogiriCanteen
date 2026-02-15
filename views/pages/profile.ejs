@@ -1,0 +1,99 @@
+<%- include('../partials/header') %>
+
+    <div class="container" style="margin-top: 140px; margin-bottom: 80px;">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+
+                <div class="profile-card">
+                    <!-- Decorative Header -->
+                    <div class="profile-header">
+                        <!-- Intentionally empty, provides background -->
+                    </div>
+
+                    <!-- Avatar & Intro -->
+                    <div class="text-center">
+                        <div class="avatar-wrapper">
+                            <div class="avatar-circle large">
+                                <%= user.name.charAt(0).toUpperCase() %>
+                            </div>
+                        </div>
+                        <h1 class="profile-name">
+                            <%= user.name %>
+                        </h1>
+                        <span class="profile-role-badge">
+                            <%= user.role %>
+                        </span>
+                    </div>
+
+                    <!-- Details List -->
+                    <div class="profile-details">
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="detail-content">
+                                <label>Email Address</label>
+                                <span>
+                                    <%= user.email %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="detail-content">
+                                <label>Contact Number</label>
+                                <span>
+                                    <%= user.contact || 'Not provided' %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-id-card-alt"></i>
+                            </div>
+                            <div class="detail-content">
+                                <label>Username</label>
+                                <span>@<%= user.username %></span>
+                            </div>
+                        </div>
+
+                        <% if (user.role==='teacher' ) { %>
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <label>Delivery Address</label>
+                                    <span>
+                                        <%= user.address || 'No address saved.' %>
+                                    </span>
+                                </div>
+                            </div>
+                            <% } %>
+
+                                <div class="profile-actions">
+                                    <a href="/orders" class="btn btn-primary">
+                                        <i class="fas fa-receipt"></i> My Orders
+                                    </a>
+                                    <a href="/" class="btn btn-outline">
+                                        <i class="fas fa-home"></i> Home
+                                    </a>
+                                </div>
+
+                    </div>
+                    <div class="text-center pb-4 text-muted small">
+                        Member since <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString(undefined, {
+                            year: 'numeric' , month: 'long' , day: 'numeric' }) : 'N/A' %>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

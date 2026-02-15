@@ -1,0 +1,6 @@
+node_modules
+.env
+.vscode
+.idea
+*.log
+public/images/vada_pav_video.mp4

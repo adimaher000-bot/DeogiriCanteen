@@ -1,0 +1,531 @@
+<%- include('../partials/header') %>
+
+    <div class="cart-page-wrapper">
+        <div class="container main-cart-container">
+
+            <div class="section-header">
+                <h2>Your Cart <span class="cart-count-badge">
+                        <%= cart.totalQty %> Items
+                    </span></h2>
+                <% if (cart.items.length> 0) { %>
+                    <button class="btn btn-outline-danger btn-sm" onclick="clearCart()">
+                        <i class="fas fa-trash-alt"></i> Clear Cart
+                    </button>
+                    <% } %>
+            </div>
+
+            <% if (cart && cart.items.length> 0) { %>
+                <div class="cart-grid">
+                    <!-- Left Side: Cart Items -->
+                    <div class="cart-items-section">
+                        <% cart.items.forEach(item=> { %>
+                            <div class="cart-card glass-card">
+                                <div class="cart-img-wrapper">
+                                    <img src="<%= item.image %>" alt="<%= item.item_name %>">
+                                </div>
+                                <div class="cart-details">
+                                    <span class="item-cat">Item</span>
+                                    <h4>
+                                        <%= item.item_name %>
+                                    </h4>
+                                    <div class="item-price">₹<%= item.price %>
+                                    </div>
+                                </div>
+                                <div class="cart-actions">
+                                    <div class="qty-control glass-control">
+                                        <button class="qty-btn minus"
+                                            onclick="updateQty('<%= item.menu_id %>', <%= item.quantity - 1 %>)">-</button>
+                                        <span class="qty-val">
+                                            <%= item.quantity %>
+                                        </span>
+                                        <button class="qty-btn plus"
+                                            onclick="updateQty('<%= item.menu_id %>', <%= item.quantity + 1 %>)">+</button>
+                                    </div>
+                                    <div class="item-total">₹<%= item.price * item.quantity %>
+                                    </div>
+                                    <button class="delete-btn" onclick="removeFromCart('<%= item.menu_id %>')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <% }) %>
+                    </div>
+
+                    <!-- Right Side: Summary & Checkout -->
+                    <div class="cart-summary-section">
+                        <div class="cart-summary-card glass-card sticky-summary">
+                            <h3>Order Summary</h3>
+
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span>₹<%= cart.totalPrice %></span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Delivery Fee</span>
+                                <span id="delivery-fee">₹0</span>
+                            </div>
+                            <div class="summary-total">
+                                <span>Total</span>
+                                <span id="grand-total">₹<%= cart.totalPrice %></span>
+                            </div>
+
+                            <!-- Order Type Toggle -->
+                            <div class="order-type-toggle">
+                                <span class="toggle-label">Order Type</span>
+                                <div class="toggle-pills">
+                                    <label class="toggle-pill">
+                                        <input type="radio" name="orderType" value="pickup" checked
+                                            onchange="toggleOrderType()">
+                                        <span class="pill-content"><i class="fas fa-shopping-bag"></i> Pickup</span>
+                                    </label>
+
+                                    <% if (user && user.role==='teacher' ) { %>
+                                        <label class="toggle-pill">
+                                            <input type="radio" name="orderType" value="delivery"
+                                                onchange="toggleOrderType()">
+                                            <span class="pill-content"><i class="fas fa-truck"></i> Delivery</span>
+                                        </label>
+                                        <% } %>
+                                </div>
+                            </div>
+
+                            <!-- Address Section (Hidden by default) -->
+                            <div id="address-section" class="address-section hidden">
+                                <label><i class="fas fa-map-marker-alt"></i> Delivery Address</label>
+                                <textarea id="delivery-address" class="form-control glass-input" rows="2"
+                                    placeholder="Room No, Building..."><%= user && user.address ? user.address : '' %></textarea>
+                            </div>
+
+                            <button class="btn btn-primary btn-block checkout-btn" onclick="placeOrder()"
+                                id="placeOrderBtn">
+                                Place Order <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <% } else { %>
+                    <div class="empty-cart-state glass-card">
+                        <div class="empty-icon">
+                            <i class="fas fa-shopping-basket"></i>
+                        </div>
+                        <h3>Your cart is empty</h3>
+                        <p>Looks like you haven't added anything yet.</p>
+                        <a href="/menu" class="btn btn-primary">Start Ordering</a>
+                    </div>
+                    <% } %>
+        </div>
+    </div>
+
+    <style>
+        /* Scoped Styles for Cart Page */
+        .cart-page-wrapper {
+            padding-top: 120px;
+            padding-bottom: 80px;
+            background: #fdfdfd;
+            min-height: 100vh;
+        }
+
+        .main-cart-container {
+            max-width: 1200px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .cart-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .cart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cart Card */
+        .cart-card {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            gap: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .cart-card:hover {
+            /* Hover effect requested */
+            transform: translateY(-5px);
+        }
+
+        .cart-img-wrapper img {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-details {
+            flex: 1;
+        }
+
+        .item-cat {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .cart-details h4 {
+            margin: 5px 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        /* Qty Control */
+        .qty-control {
+            display: flex;
+            align-items: center;
+            background: #f1f3f5;
+            border-radius: 50px;
+            padding: 5px;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .qty-val {
+            padding: 0 15px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .cart-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .item-total {
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1rem;
+            width: 80px;
+            text-align: right;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #ff7675;
+            /* Secondary Red */
+            cursor: pointer;
+            padding: 10px;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .delete-btn:hover {
+            background: #ffecec;
+        }
+
+        /* Summary Card */
+        .sticky-summary {
+            position: sticky;
+            top: 120px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* Toggle Pills */
+        .toggle-pills {
+            display: flex;
+            background: #f1f3f5;
+            border-radius: 50px;
+            padding: 5px;
+            margin-top: 10px;
+        }
+
+        .toggle-pill {
+            flex: 1;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .toggle-pill input {
+            display: none;
+        }
+
+        .pill-content {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #666;
+            transition: 0.3s;
+        }
+
+        .toggle-pill input:checked+.pill-content {
+            background: white;
+            color: var(--primary);
+            /* Brand Color */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .order-type-toggle {
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            margin-left: 10px;
+        }
+
+        /* Address Section */
+        .address-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-input {
+            background: white;
+            border: 1px solid #e1e1e1;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .checkout-btn {
+            margin-top: 30px;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Empty State */
+        .empty-cart-state {
+            text-align: center;
+            padding: 80px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            color: #e1e1e1;
+            margin-bottom: 30px;
+        }
+    </style>
+
+    <script>
+        // Store current checkout data
+        let currentOrderType = 'pickup';
+        let currentOrderAddress = '';
+
+        function updateQty(menuId, newQty) {
+            if (newQty < 1) return;
+            if (newQty > 10) {
+                alert("Max quantity per item is 10");
+                return;
+            }
+
+            fetch('/cart/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ menu_id: menuId, quantity: newQty })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload(); // Reload to update totals nicely
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        function removeFromCart(id) {
+            if (!confirm("Remove this item?")) return;
+            fetch('/cart/remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ menu_id: id })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') location.reload();
+                });
+        }
+
+        function clearCart() {
+            if (!confirm("Are you sure you want to clear your entire cart?")) return;
+            fetch('/cart/clear', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') location.reload();
+                });
+        }
+
+        function toggleOrderType() {
+            const type = document.querySelector('input[name="orderType"]:checked').value;
+            const addrSection = document.getElementById('address-section');
+            const deliveryFee = document.getElementById('delivery-fee');
+
+            if (type === 'delivery') {
+                addrSection.classList.remove('hidden');
+                // animate
+                addrSection.style.opacity = '0';
+                setTimeout(() => addrSection.style.opacity = '1', 10);
+                deliveryFee.innerText = '₹20'; // Example fee visual
+            } else {
+                addrSection.classList.add('hidden');
+                deliveryFee.innerText = '₹0';
+            }
+        }
+
+        function placeOrder() {
+            const type = document.querySelector('input[name="orderType"]:checked').value;
+            let address = '';
+
+            if (type === 'delivery') {
+                const addrInput = document.getElementById('delivery-address');
+                if (addrInput) address = addrInput.value;
+                if (!address || !address.trim()) {
+                    alert("Please enter a delivery address.");
+                    addrInput.focus();
+                    return;
+                }
+            }
+
+            // Store for payment step
+            currentOrderType = type;
+            currentOrderAddress = address;
+
+            // Show Payment Modal
+            openPaymentModal();
+        }
+
+        // --- Payment Modal Logic ---
+        function openPaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            const totalText = document.getElementById('grand-total').innerText;
+
+            // Allow manual override for delivery fee calculation in JS if needed, 
+            // but for now relying on what's displayed or server calc.
+
+            document.querySelector('.pay-amount').innerText = totalText;
+
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Close on outside click
+        window.addEventListener('click', function (event) {
+            const modal = document.getElementById('paymentModal');
+            if (event.target == modal) {
+                closePaymentModal();
+            }
+        });
+
+        function confirmPayment() {
+            const btn = document.getElementById('confirmPaymentBtn');
+            const originalContent = btn.innerHTML;
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
+
+            // Proceed to actual order placement
+            fetch('/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ order_type: currentOrderType, address: currentOrderAddress })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Success!
+                        btn.innerHTML = '<i class="fas fa-check"></i> Paid!';
+                        setTimeout(() => {
+                            window.location.href = '/orders';
+                        }, 1000);
+                    } else {
+                        alert(data.message);
+                        btn.innerHTML = originalContent;
+                        btn.disabled = false;
+                        if (data.message.includes('login')) window.location.href = '/login';
+                        closePaymentModal();
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Something went wrong.");
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                    closePaymentModal();
+                });
+        }
+    </script>
+
+    <%- include('../partials/payment_modal') %>
+
+        <%- include('../partials/footer') %>

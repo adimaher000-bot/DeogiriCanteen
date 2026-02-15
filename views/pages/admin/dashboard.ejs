@@ -1,0 +1,81 @@
+<%- include('../../partials/admin/header') %>
+
+    <div class="stat-grid">
+        <div class="stat-box">
+            <h3>Total Orders</h3>
+            <h2>
+                <%= stats.totalOrders %>
+            </h2>
+        </div>
+        <div class="stat-box">
+            <h3>Pending Orders</h3>
+            <h2>
+                <%= stats.pendingOrders %>
+            </h2>
+        </div>
+        <div class="stat-box">
+            <h3>Total Revenue</h3>
+            <h2>₹<%= stats.totalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                    %>
+            </h2>
+        </div>
+        <div class="stat-box" style="border-left-color: #ff9f43;">
+            <h3>Delivery Requests</h3>
+            <h2>
+                <%= stats.deliveryOrders %>
+            </h2>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Recent Orders</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (recentOrders.length> 0) { %>
+                    <% recentOrders.forEach(order=> { %>
+                        <tr>
+                            <td>#<%= order._id.toString().slice(-6) %>
+                            </td>
+                            <td>
+                                <%= order.user ? order.user.name : 'Guest' %>
+                                    <span class="badge badge-info">
+                                        <%= order.user ? (order.user.role.charAt(0).toUpperCase() +
+                                            order.user.role.slice(1)) : 'Guest' %>
+                                    </span>
+                            </td>
+                            <td>
+                                <!-- Assuming order_type exists, default to Pickup if not -->
+                                <% if (order.order_type==='delivery' ) { %>
+                                    <span class="badge badge-warning">Delivery</span>
+                                    <% } else { %>
+                                        <span class="badge badge-success">Pickup</span>
+                                        <% } %>
+                            </td>
+                            <td>₹<%= order.total_amount %>
+                            </td>
+                            <td>
+                                <%= order.status %>
+                            </td>
+                            <td><a href="/admin/orders" class="btn btn-sm btn-primary">Manage</a></td>
+                        </tr>
+                        <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">No recent orders found.</td>
+                                </tr>
+                                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <%- include('../../partials/admin/footer') %>

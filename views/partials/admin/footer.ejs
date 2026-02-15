@@ -1,0 +1,17 @@
+</div> <!-- End main-content -->
+
+
+<script>
+    // Defensive fix for cursor blur issue
+    document.addEventListener('DOMContentLoaded', () => {
+        const cursors = document.querySelectorAll('.cursor-dot, .cursor-follower');
+        cursors.forEach(el => el.remove());
+        document.body.style.cursor = 'auto';
+    });
+</script>
+
+<!-- Safe Custom Cursor -->
+<script src="/js/safe_cursor.js"></script>
+</body>
+
+</html>

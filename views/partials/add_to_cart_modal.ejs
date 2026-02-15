@@ -1,0 +1,27 @@
+<!-- Add to Cart Modal -->
+<div id="addToCartModal" class="modal-overlay">
+    <div class="modal-glass-card">
+        <div class="modal-content-wrapper">
+            <div class="success-animation">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+            <h3>Added to Cart!</h3>
+
+            <div class="added-item-preview">
+                <img id="modalItemImage" src="" alt="Item">
+                <div class="item-info">
+                    <h4 id="modalItemName">Item Name</h4>
+                    <p id="modalItemPrice" class="price">₹0</p>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeAddToCartModal()">Continue Shopping</button>
+                <a href="/cart" class="btn-primary">View Cart & Checkout</a>
+            </div>
+        </div>
+    </div>
+</div>

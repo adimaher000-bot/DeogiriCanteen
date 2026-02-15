@@ -1,0 +1,389 @@
+<%- include('../../partials/admin/header') %>
+
+    <div class="admin-content-wrapper">
+        <div class="page-header d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="page-title">Manage Orders</h2>
+                <p class="text-muted">Track and update customer orders.</p>
+            </div>
+
+            <!-- Filter Pills -->
+            <div class="filter-pills glass-pills">
+                <a href="/admin/orders?filter=all" class="pill-tab <%= filter === 'all' ? 'active' : '' %>">All</a>
+                <a href="/admin/orders?filter=student"
+                    class="pill-tab <%= filter === 'student' ? 'active' : '' %>">Students</a>
+                <a href="/admin/orders?filter=teacher"
+                    class="pill-tab <%= filter === 'teacher' ? 'active' : '' %>">Teachers</a>
+            </div>
+        </div>
+
+        <% if (orders && orders.length> 0) { %>
+            <div class="admin-orders-grid">
+                <% orders.forEach(order=> { %>
+                    <div class="admin-order-card glass-card <%= order.status.toLowerCase() %>-border">
+
+                        <div class="card-header-row">
+                            <div class="order-id">
+                                <span class="label">#</span>
+                                <%= order._id.toString().slice(-6).toUpperCase() %>
+                            </div>
+                            <div class="order-time">
+                                <%= new Date(order.createdAt).toLocaleTimeString([], {hour: '2-digit' ,
+                                    minute:'2-digit'}) %>
+                                    <span class="date">
+                                        <%= new Date(order.createdAt).toLocaleDateString() %>
+                                    </span>
+                            </div>
+                        </div>
+
+                        <div class="user-info-row">
+                            <div class="avatar-circle">
+                                <%= order.user ? order.user.name.charAt(0).toUpperCase() : '?' %>
+                            </div>
+                            <div class="user-details">
+                                <h4 class="user-name">
+                                    <%= order.user ? order.user.name : 'Unknown User' %>
+                                </h4>
+                                <span
+                                    class="user-role badge-<%= order.user && order.user.role === 'teacher' ? 'warning' : 'info' %>">
+                                    <%= order.user ? order.user.role : 'Guest' %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="order-items-scroll">
+                            <ul class="items-list">
+                                <% order.items.forEach(item=> { %>
+                                    <li>
+                                        <span class="qty">
+                                            <%= item.quantity %>x
+                                        </span>
+                                        <span class="name">
+                                            <%= item.menu_item ? item.menu_item.item_name : 'Item Unavailable' %>
+                                        </span>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                        </div>
+
+                        <% if(order.order_type==='delivery' ) { %>
+                            <div class="delivery-info">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>
+                                    <%= order.delivery_address || 'No Address Provided' %>
+                                </span>
+                            </div>
+                            <% } %>
+
+                                <div class="card-footer-row">
+                                    <div class="order-total">
+                                        <span class="label">Total</span>
+                                        <span class="amount">₹<%= order.total_amount %></span>
+                                    </div>
+
+                                    <form action="/admin/order/status" method="POST" class="status-form">
+                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                        <select name="status" onchange="this.form.submit()"
+                                            class="status-select <%= order.status.toLowerCase() %>">
+                                            <option value="Pending" <%=order.status==='Pending' ? 'selected' : '' %>
+                                                >Pending</option>
+                                            <option value="Processing" <%=order.status==='Processing' ? 'selected' : ''
+                                                %>>Processing</option>
+                                            <option value="Completed" <%=order.status==='Completed' ? 'selected' : '' %>
+                                                >Completed</option>
+                                            <option value="Cancelled" <%=order.status==='Cancelled' ? 'selected' : '' %>
+                                                >Cancelled</option>
+                                        </select>
+                                    </form>
+                                </div>
+
+                                <!-- Type Badge Overlay -->
+                                <div class="type-badge <%= order.order_type %>">
+                                    <% if(order.order_type==='delivery' ) { %>
+                                        <i class="fas fa-truck"></i>
+                                        <% } else { %>
+                                            <i class="fas fa-shopping-bag"></i>
+                                            <% } %>
+                                </div>
+
+                    </div>
+                    <% }) %>
+            </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-clipboard-list"></i></div>
+                    <h3>No Orders Found</h3>
+                    <p>Waiting for new orders to arrive.</p>
+                </div>
+                <% } %>
+    </div>
+
+    <style>
+        /* Scoped Styles for Admin Orders */
+        .admin-orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .admin-order-card {
+            padding: 20px;
+            position: relative;
+            border-left: 5px solid transparent;
+        }
+
+        /* Status Border Colors */
+        .admin-order-card.pending-border {
+            border-left-color: #ffa502;
+        }
+
+        .admin-order-card.processing-border {
+            border-left-color: #3742fa;
+        }
+
+        .admin-order-card.completed-border {
+            border-left-color: #2ed573;
+        }
+
+        .admin-order-card.cancelled-border {
+            border-left-color: #ff4757;
+            opacity: 0.7;
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-family: monospace;
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .order-id .label {
+            color: #aaa;
+            margin-right: 2px;
+        }
+
+        .order-time {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .order-time .date {
+            display: block;
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .user-info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            background: #f1f2f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .user-name {
+            margin: 0;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .user-role {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .items-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .items-list li {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        .items-list .qty {
+            font-weight: 600;
+            color: var(--primary);
+            margin-right: 8px;
+        }
+
+        .delivery-info {
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #666;
+            margin: 10px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .delivery-info i {
+            color: #ffa502;
+            margin-top: 3px;
+        }
+
+        .card-footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .order-total .label {
+            display: block;
+            font-size: 0.7rem;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        .order-total .amount {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* Custom Select */
+        .status-select {
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            /* Hide default arrow partially */
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right .7em top 50%;
+            background-size: .65em auto;
+            padding-right: 2.5em;
+        }
+
+        .status-select.pending {
+            background-color: #ffeaa7;
+            color: #d35400;
+        }
+
+        .status-select.processing {
+            background-color: #74b9ff;
+            color: #0984e3;
+        }
+
+        .status-select.completed {
+            background-color: #55efc4;
+            color: #00b894;
+        }
+
+        .status-select.cancelled {
+            background-color: #fab1a0;
+            color: #d63031;
+        }
+
+        .type-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .type-badge.delivery {
+            background: #ff9f43;
+        }
+
+        .type-badge.pickup {
+            background: #0abde3;
+        }
+
+        /* Filter Pills */
+        .filter-pills {
+            display: flex;
+            background: white;
+            padding: 5px;
+            border-radius: 30px;
+            border: 1px solid #eee;
+        }
+
+        .pill-tab {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #666;
+            transition: 0.3s;
+        }
+
+        .pill-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #aaa;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+    </style>
+
+    <%- include('../../partials/admin/footer') %>

@@ -1,0 +1,132 @@
+<%- include('../../partials/admin/header') %>
+
+    <div class="card-header"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h3>Registered Users</h3>
+        <span class="badge badge-info" style="font-size: 1rem; padding: 10px 20px;">
+            <%= users.length %> Users
+        </span>
+    </div>
+
+    <div class="user-grid">
+        <% if (users.length> 0) { %>
+            <% users.forEach(user=> { %>
+                <div class="user-card">
+                    <div class="user-avatar">
+                        <%= user.name.charAt(0).toUpperCase() %>
+                    </div>
+                    <div class="user-info">
+                        <h4>
+                            <%= user.name %>
+                        </h4>
+                        <div class="user-role">
+                            <% if (user.role==='admin' ) { %>
+                                <span class="badge badge-danger">Admin</span>
+                                <% } else if (user.role==='teacher' ) { %>
+                                    <span class="badge badge-warning">Teacher</span>
+                                    <% } else { %>
+                                        <span class="badge badge-success">Student</span>
+                                        <% } %>
+                        </div>
+                        <p class="user-detail"><i class="fas fa-envelope"></i>
+                            <%= user.email %>
+                        </p>
+                        <% if (user.phone) { %>
+                            <p class="user-detail"><i class="fas fa-phone"></i>
+                                <%= user.phone %>
+                            </p>
+                            <% } %>
+                                <p class="user-meta">Joined: <%= new Date(user.createdAt).toLocaleDateString('en-IN') %>
+                                </p>
+                    </div>
+                </div>
+                <% }) %>
+                    <% } else { %>
+                        <div class="no-users">
+                            <p>No users found.</p>
+                        </div>
+                        <% } %>
+    </div>
+
+    <style>
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding-bottom: 40px;
+        }
+
+        .user-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .user-info h4 {
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-size: 1.2rem;
+        }
+
+        .user-role {
+            margin-bottom: 15px;
+        }
+
+        .user-detail {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .user-meta {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #a0aec0;
+            border-top: 1px solid #edf2f7;
+            padding-top: 10px;
+            width: 100%;
+        }
+
+        .no-users {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px;
+            color: #718096;
+            font-size: 1.2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+    </style>
+
+    <%- include('../../partials/admin/footer') %>

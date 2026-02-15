@@ -1,0 +1,312 @@
+<%- include('../../partials/admin/header') %>
+
+    <div class="card">
+        <div class="card-header"
+            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <h3>Manage Menu</h3>
+
+            <div id="saveActions" style="display: none; align-items: center; gap: 10px;">
+                <button id="btnUndo" class="btn btn-sm btn-outline-secondary" onclick="undo()" disabled>
+                    <i class="fas fa-undo"></i> Undo
+                </button>
+                <button id="btnRedo" class="btn btn-sm btn-outline-secondary" onclick="redo()" disabled>
+                    <i class="fas fa-redo"></i> Redo
+                </button>
+                <button id="btnSave" class="btn btn-sm btn-success" onclick="saveOrder()">
+                    <i class="fas fa-save"></i> Save Order
+                </button>
+            </div>
+
+            <button class="btn btn-primary" onclick="openAddModal()">+ Add New Item</button>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40px;"></th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Available</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (menuItems && menuItems.length> 0) { %>
+                        <% menuItems.forEach(item=> { %>
+                            <tr data-id="<%= item._id %>">
+                                <td class="drag-handle" style="cursor: move; color: #ccc;">
+                                    <i class="fas fa-bars"></i>
+                                </td>
+                                <td>
+                                    <% if (item.image) { %>
+                                        <img src="/images/<%= item.image %>" alt="<%= item.item_name %>"
+                                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                        <% } else { %>
+                                            <div
+                                                style="width: 50px; height: 50px; background: #eee; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+                                                No Img</div>
+                                            <% } %>
+                                </td>
+                                <td>
+                                    <%= item.item_name %>
+                                </td>
+                                <td>
+                                    <%= item.category %>
+                                </td>
+                                <td>₹<%= item.price %>
+                                </td>
+                                <td>
+                                    <% if (item.is_available) { %>
+                                        <span class="badge badge-success">Yes</span>
+                                        <% } else { %>
+                                            <span class="badge badge-danger">No</span>
+                                            <% } %>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning"
+                                        onclick='openEditModal(<%- JSON.stringify(item) %>)'>Edit</button>
+                                    <form action="/admin/menu/delete" method="POST" style="display: inline;"
+                                        onsubmit="return confirm('Are you sure?');">
+                                        <input type="hidden" name="id" value="<%= item._id %>">
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7" style="text-align: center;">No menu items found.</td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal (Simplified reuse) -->
+    <div id="itemModal" class="modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="modal-content"
+            style="background: #fff; padding: 2rem; border-radius: 10px; width: 90%; max-width: 500px;">
+            <h3 id="modalTitle">Add Menu Item</h3>
+            <form id="itemForm" action="/admin/menu/add" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="id" id="itemId">
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Item Name</label>
+                    <input type="text" name="item_name" id="itemName" required class="form-control"
+                        style="width: 100%; padding: 0.5rem;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Category</label>
+                    <select name="category" id="itemCategory" required class="form-control"
+                        style="width: 100%; padding: 0.5rem;">
+                        <option value="Starters">Starters</option>
+                        <option value="Main Course">Main Course</option>
+                        <option value="Breads">Breads</option>
+                        <option value="Desserts">Desserts</option>
+                        <option value="Beverages">Beverages</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Price (₹)</label>
+                    <input type="number" name="price" id="itemPrice" required class="form-control"
+                        style="width: 100%; padding: 0.5rem;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Description</label>
+                    <textarea name="description" id="itemDescription" class="form-control"
+                        style="width: 100%; padding: 0.5rem;"></textarea>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Image</label>
+                    <input type="file" name="image" id="itemImage" class="form-control" accept="image/*">
+                    <small>Leave blank to keep existing image when editing</small>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <input type="checkbox" name="is_available" id="itemAvailable" checked>
+                    <label for="itemAvailable">Available</label>
+                </div>
+
+                <div style="text-align: right;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SortableJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+    <script>
+        // Modal Logic
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'Add Menu Item';
+            document.getElementById('itemForm').action = '/admin/menu/add';
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemId').value = '';
+            document.getElementById('itemModal').style.display = 'flex';
+        }
+
+        function openEditModal(item) {
+            document.getElementById('modalTitle').innerText = 'Edit Menu Item';
+            document.getElementById('itemForm').action = '/admin/menu/edit';
+            document.getElementById('itemId').value = item._id;
+            document.getElementById('itemName').value = item.item_name;
+            document.getElementById('itemCategory').value = item.category;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('itemDescription').value = item.description || '';
+            document.getElementById('itemAvailable').checked = item.is_available;
+            document.getElementById('itemModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('itemModal').style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            if (event.target == document.getElementById('itemModal')) {
+                closeModal();
+            }
+        }
+
+        // --- Drag & Drop Reordering Logic ---
+        const tbody = document.querySelector('tbody');
+        let sortable;
+        let initialOrder = [];
+        let history = []; // Stack of order arrays
+        let historyIndex = -1;
+
+        // Initialize Sortable
+        function initSortable() {
+            if (!tbody) return;
+
+            sortable = new Sortable(tbody, {
+                animation: 150,
+                handle: '.drag-handle', // Drag via handle only
+                onEnd: function () {
+                    addToHistory();
+                    showSaveActions();
+                }
+            });
+            // Capture initial state
+            initialOrder = getOrder();
+            // Reset history
+            history = [initialOrder.slice()];
+            historyIndex = 0;
+            updateButtons();
+        }
+
+        // Get current order of IDs
+        function getOrder() {
+            return Array.from(tbody.querySelectorAll('tr[data-id]')).map(tr => tr.dataset.id);
+        }
+
+        function addToHistory() {
+            const currentOrder = getOrder();
+            // If dragging multiple times, cut off "future" history (redo path)
+            if (historyIndex < history.length - 1) {
+                history = history.slice(0, historyIndex + 1);
+            }
+            history.push(currentOrder);
+            historyIndex++;
+            updateButtons();
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                applyOrder(history[historyIndex]);
+                updateButtons();
+                showSaveActions();
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                applyOrder(history[historyIndex]);
+                updateButtons();
+                showSaveActions();
+            }
+        }
+
+        function applyOrder(orderIds) {
+            // Re-append rows in the new order
+            const rows = Array.from(tbody.querySelectorAll('tr[data-id]'));
+            const rowMap = {};
+            rows.forEach(row => rowMap[row.dataset.id] = row);
+
+            orderIds.forEach(id => {
+                if (rowMap[id]) {
+                    tbody.appendChild(rowMap[id]);
+                }
+            });
+        }
+
+        function updateButtons() {
+            const btnUndo = document.getElementById('btnUndo');
+            const btnRedo = document.getElementById('btnRedo');
+            if (btnUndo) btnUndo.disabled = historyIndex <= 0;
+            if (btnRedo) btnRedo.disabled = historyIndex >= history.length - 1;
+        }
+
+        function showSaveActions() {
+            const actions = document.getElementById('saveActions');
+            if (actions) actions.style.display = 'flex';
+        }
+
+        async function saveOrder() {
+            const order = getOrder();
+            const btn = document.getElementById('btnSave');
+            const originalText = btn.innerText;
+            btn.innerText = 'Saving...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/admin/menu/reorder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Menu order saved successfully!');
+                    document.getElementById('saveActions').style.display = 'none';
+                    // Reset history to this new base state
+                    initialOrder = order.slice();
+                    history = [initialOrder];
+                    historyIndex = 0;
+                } else {
+                    alert('Failed to save order.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error saving order.');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+                updateButtons();
+            }
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function () {
+            if (tbody && tbody.querySelector('tr') && !tbody.querySelector('td[colspan]')) {
+                initSortable();
+            }
+        });
+
+    </script>
+
+    <%- include('../../partials/admin/footer') %>

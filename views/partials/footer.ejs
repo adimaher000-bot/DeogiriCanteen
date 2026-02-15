@@ -1,0 +1,107 @@
+<!-- Cart Modal -->
+<!-- Cart Modal Removed -->
+
+<!-- Footer -->
+<footer>
+    <%- include('add_to_cart_modal') %>
+        <%- include('booking_modal') %>
+            <div class="container">
+                <div class="footer-grid">
+                    <!-- Brand Column -->
+                    <div class="footer-col">
+                        <div class="footer-brand">
+                            <div class="brand-icon">🍕</div>
+                            <span class="brand-text">Deogiri Canteen</span>
+                        </div>
+                        <p style="color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">
+                            Serving fresh, delicious, and hygienic food to the Deogiri College family. Quality
+                            ingredients,
+                            amazing taste.
+                        </p>
+                        <div class="social-links-row">
+                            <a href="https://share.google/s927dTZdHbgsEVm4B" target="_blank" class="social-btn"><i
+                                    class="fab fa-facebook-f"></i></a>
+                            <a href="mailto:deogiri@mspmandal.in" class="social-btn"><i class="fab fa-google"></i></a>
+                            <a href="https://www.instagram.com/deogiricollege?igsh=MWVkcmo3bjE0cHBvYQ==" target="_blank"
+                                class="social-btn"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="footer-col">
+                        <h4 class="footer-heading">Quick Links</h4>
+                        <ul class="footer-links-list">
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/menu">Menu</a></li>
+                            <li><a href="/cart">My Cart</a></li>
+                            <li><a href="/login">Login / Signup</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Help -->
+                    <div class="footer-col">
+                        <h4 class="footer-heading">Support</h4>
+                        <ul class="footer-links-list">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Newsletter/Contact -->
+                    <div class="footer-col">
+                        <h4 class="footer-heading">Stay Updated</h4>
+                        <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.9rem;">Subscribe for
+                            special
+                            offers and daily menu updates.</p>
+                        <form class="footer-newsletter" onsubmit="event.preventDefault(); alert('Subscribed!');">
+                            <input type="email" placeholder="Your email address" required>
+                            <button type="submit"><i class="fas fa-arrow-right"></i></button>
+                        </form>
+                        <div style="margin-top: 20px; color: var(--text-muted); font-size: 0.9rem;">
+                            <i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 8px;"></i>
+                            Deogiri
+                            College Campus
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Deogiri College Canteen.
+                        All Rights Reserved.
+                    </p>
+
+                    <div style="margin: 10px 0;">
+                        <span style="color: #ccc; margin-right: 10px; font-size: 0.9rem;">
+                            Language:
+                        </span>
+                        <a href="?lang=en"
+                            style="color: var(--primary); font-weight: bold; text-decoration: none; margin-right: 8px;">English</a>
+                        <span style="color: #555;">|</span>
+                        <a href="#"
+                            style="color: #888; font-weight: normal; text-decoration: none; margin-left: 8px;">हिंदी</a>
+                    </div>
+
+                    <p style="font-size: 0.8rem; opacity: 0.7;">
+                        Made with <i class="fas fa-heart" style="color: #e74c3c;"></i> by ADI
+                    </p>
+                </div>
+            </div>
+</footer>
+<!-- Cursor Animation -->
+<script src="/js/cursor.js"></script>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 900,
+        easing: 'ease-in-out',
+        once: true
+    });
+</script>
+<!-- Safe Custom Cursor -->
+<script src="/js/safe_cursor.js"></script>
+</body>
+
+</html>

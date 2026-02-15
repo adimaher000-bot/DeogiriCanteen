@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Deogiri Canteen</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #4ecca3;
+            --primary-dark: #3db892;
+            --text-dark: #2d3748;
+            --text-muted: #718096;
+            --bg-light: #f7fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .admin-login-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.02);
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .logo-container {
+            margin-bottom: 25px;
+        }
+
+        .logo-container img {
+            height: 80px;
+            width: auto;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-sizing: border-box;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78, 204, 163, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--text-dark);
+            /* Dark button for admin feel */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: black;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--text-dark);
+        }
+
+        .error-message {
+            background: #fff5f5;
+            color: #c53030;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            border: 1px solid #feb2b2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="admin-login-card">
+        <div class="logo-container">
+            <img src="/images/college_logo_new.png" alt="Deogiri College Logo">
+        </div>
+
+        <h2>Admin Portal</h2>
+        <p class="subtitle">Secure Access for Management</p>
+
+        <% if (typeof errorMessage !=='undefined' && errorMessage) { %>
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <%= errorMessage %>
+            </div>
+            <% } %>
+
+                <form action="/admin/login" method="POST">
+                    <div class="form-group">
+                        <label>Administrator Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="admin@deogiri.edu" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div style="position: relative;">
+                            <input type="password" name="password" class="form-control" placeholder="•••••••••"
+                                required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-lock" style="margin-right: 8px;"></i> Access Dashboard
+                    </button>
+                </form>
+
+                <a href="/" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Return to Canteen Website
+                </a>
+    </div>
+
+</body>
+
+</html>

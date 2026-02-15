@@ -1,0 +1,103 @@
+<%- include('../partials/header') %>
+
+    <div class="container menu-section" style="padding-top: 50px;">
+        <div class="section-title" data-aos="fade-up" style="text-align: center; margin-bottom: 40px;">
+            <h2>Our Menu</h2>
+        </div>
+
+        <div class="menu-filters" style="text-align: center; margin-bottom: 40px;">
+            <button class="cat-btn active" onclick="filterMenu('all', this)">All</button>
+            <% const categories=[...new Set(menuItems.map(item=> item.category))];
+                categories.forEach(cat => {
+                %>
+                <button class="cat-btn" onclick="filterMenu('<%= cat %>', this)">
+                    <%= cat %>
+                </button>
+                <% }) %>
+        </div>
+
+        <div class="menu-grid">
+            <% menuItems.forEach(item=> {
+                let imageUrl = item.image ? '/images/' + item.image : "https://loremflickr.com/300/300/" +
+                encodeURIComponent(item.category) + ",food?lock=" + item._id;
+                let isAvailable = item.is_available;
+                let unavailableClass = !isAvailable ? 'unavailable-item' : '';
+                let blurStyle = !isAvailable ? 'filter: grayscale(100%) blur(1px); opacity: 0.7;' : '';
+                let discountPercent = item.discount_percent;
+                let originalPrice = item.price;
+                let finalPrice = originalPrice;
+
+                if (discountPercent > 0) {
+                finalPrice = Math.round(originalPrice * (1 - (discountPercent / 100)));
+                }
+                %>
+                <div class="menu-item <%= unavailableClass %>" data-category="<%= item.category %>"
+                    style="position: relative; overflow: hidden; background: #fff;" data-aos="fade-up">
+
+                    <% if (!isAvailable) { %>
+                        <div class="out-of-stock-overlay"
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; justify-content: center; align-items: center; pointer-events: none;">
+                            <div class="taped-paper">Not Available<br>Today</div>
+                        </div>
+                        <% } %>
+
+                            <div class="image-wrapper" style="<%= blurStyle %>">
+                                <img src="<%= imageUrl %>" alt="<%= item.item_name %>" class="menu-img">
+                                <% if (discountPercent> 0) { %>
+                                    <div class="img-discount-tag">
+                                        <%= discountPercent %> % OFF
+                                    </div>
+                                    <% } %>
+                            </div>
+
+                            <div class="menu-content" style="<%= !isAvailable ? 'opacity: 0.5;' : '' %>">
+                                <div class="menu-category">
+                                    <%= item.category %>
+                                </div>
+                                <h3 class="menu-name">
+                                    <%= item.item_name %>
+                                </h3>
+
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+
+                                <div class="menu-footer">
+                                    <% if (discountPercent> 0) { %>
+                                        <div class="price-container">
+                                            <span class="original-price">₹<%= originalPrice %></span>
+                                            <span class="final-price">₹<%= finalPrice %></span>
+                                            <span class="discount-badge">
+                                                <%= discountPercent %> % OFF
+                                            </span>
+                                        </div>
+                                        <% } else { %>
+                                            <div class="price-container">
+                                                <span class="final-price">₹<%= finalPrice %></span>
+                                            </div>
+                                            <% } %>
+
+                                                <% if (isAvailable) { %>
+                                                    <button class="btn-add" data-id="<%= item._id %>"
+                                                        data-name="<%= item.item_name %>" data-price="<%= finalPrice %>"
+                                                        data-image="<%= imageUrl %>" onclick="addToCart(this)">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                    <% } else { %>
+                                                        <button class="btn-add disabled" disabled
+                                                            style="background: #ccc; cursor: not-allowed;">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                        <% } %>
+                                </div>
+                            </div>
+                </div>
+                <% }); %>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

@@ -1,0 +1,210 @@
+<%- include('partials/header') %>
+
+    <!-- Hero Section -->
+    <!-- Hero Section -->
+    <section class="hero" style="position: relative; overflow: hidden; padding-bottom: 150px;">
+        <!-- Particles Canvas Wrapper -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+            <canvas class="particles-canvas"></canvas>
+        </div>
+
+        <!-- Floating Elements (Parallax) -->
+        <div class="floating-item float-1"><i class="fas fa-leaf"></i></div>
+        <div class="floating-item float-2"><i class="fas fa-pepper-hot"></i></div>
+        <div class="floating-item float-3"><i class="fas fa-lemon"></i></div>
+
+        <div class="hero-container" style="position: relative; z-index: 1;">
+            <div class="hero-content" data-aos="fade-right" data-aos-duration="1000">
+                <div class="section-subtitle">Est. 1985</div>
+                <h1>Experience the <br> <span class="text-highlight">Vibes.</span></h1>
+                <p>Good Food, Good Mood. Dive into a world of flavors where every bite tells a story.
+                    Fresh, hot, and absolutely delicious.</p>
+
+                <div class="hero-actions">
+                    <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})"
+                        class="btn btn-primary" style="padding: 15px 40px; font-size: 1.1rem;">
+                        Check Menu <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
+                    </button>
+                </div>
+
+                <div class="hero-stats" style="margin-top: 50px; display: flex; gap: 40px;">
+                    <div class="stat-item" style="display: flex; align-items: center; gap: 15px;">
+                        <div class="stat-icon"
+                            style="width: 50px; height: 50px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); color: #f1c40f; font-size: 1.2rem;">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; font-size: 1.5rem; line-height: 1; color: #333;">4.9</div>
+                            <div style="font-size: 0.85rem; color: #888; margin-top: 5px;">Rating</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-image-wrapper" data-aos="fade-left" data-aos-duration="1000">
+                <!-- Main Image with decorative elements behind -->
+                <div style="position: relative;">
+                    <div
+                        style="position: absolute; top: -30px; right: -30px; width: 100%; height: 100%; border: 2px solid var(--primary); border-radius: 50%; opacity: 0.2; z-index: -1;">
+                    </div>
+                    <img src="/images/hero_food.jpg" alt="Delicious Food" class="hero-img-main"
+                        style="width: 100%; max-width: 550px; border-radius: 50%; border: 10px solid #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.15);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <!-- Features Section Removed -->
+
+    <!-- Aurora Feature Section -->
+    <!-- Aurora Section Removed -->
+
+    <!-- Vada Pav Feature Section -->
+    <section class="vada-pav-section">
+        <div class="special-card">
+            <div class="special-image-wrapper" data-aos="zoom-in" data-aos-duration="1000">
+                <video autoplay muted loop playsinline class="special-image">
+                    <source src="/images/vada_pav_video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="special-content">
+                <span class="badge-price" data-aos="fade-left" data-aos-delay="300">Only ₹15</span>
+                <h2 class="special-title" data-aos="fade-up" data-aos-delay="100">Mumbai's Favorite Vada Pav</h2>
+                <p class="special-desc" data-aos="fade-right" data-aos-delay="200">
+                    Spicy, hot, and delicious! Grab our signature Vada Pav with chutney/sauce.
+                </p>
+                <button class="btn btn-primary" data-id="28" data-name="Special Vada Pav" data-price="15"
+                    data-image="/images/vada_pav.jpg" data-aos="zoom-in" data-aos-delay="400" onclick="addToCart(this)">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+
+    <div class="container menu-section">
+
+        <div class="section-title" data-aos="fade-up" style="text-align: center; margin-bottom: 40px;">
+            <span
+                style="color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem;">Taste
+                the Best</span>
+            <h2 style="font-size: 2.5rem; margin-top: 10px; color: #333;">Featured Delights</h2>
+            <p style="color: #666; max-width: 600px; margin: 10px auto;">A handpicked selection of our most popular
+                dishes.
+            </p>
+        </div>
+
+        <!-- Menu Grid (Limited) -->
+        <div class="menu-grid" id="menu-section">
+            <% if (featuredItems && featuredItems.length> 0) { %>
+                <% featuredItems.forEach(item=> {
+                    let imageUrl = item.image ? '/images/' + item.image : "https://loremflickr.com/300/300/" +
+                    encodeURIComponent(item.category) + ",food?lock=" + item._id;
+                    let isAvailable = item.is_available;
+                    let unavailableClass = !isAvailable ? 'unavailable-item' : '';
+                    let blurStyle = !isAvailable ? 'filter: grayscale(100%) blur(1px); opacity: 0.7;' : '';
+                    let discountPercent = item.discount_percent;
+                    let originalPrice = item.price;
+                    let finalPrice = originalPrice;
+
+                    if (discountPercent > 0) {
+                    finalPrice = Math.round(originalPrice * (1 - (discountPercent / 100)));
+                    }
+                    %>
+
+                    <div class="menu-item <%= unavailableClass %>" data-category="<%= item.category %>"
+                        style="position: relative; overflow: hidden; background: #fff;" data-aos="fade-up">
+
+                        <% if (!isAvailable) { %>
+                            <div class="out-of-stock-overlay"
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; justify-content: center; align-items: center; pointer-events: none;">
+                                <div class="taped-paper">Not Available<br>Today</div>
+                            </div>
+                            <% } %>
+
+                                <div class="image-wrapper" style="<%= blurStyle %>">
+                                    <img src="<%= imageUrl %>" alt="<%= item.item_name %>" class="menu-img">
+                                    <% if (discountPercent> 0) { %>
+                                        <div class="img-discount-tag">
+                                            <%= discountPercent %> % OFF
+                                        </div>
+                                        <% } %>
+                                </div>
+
+                                <div class="menu-content" style="<%= !isAvailable ? 'opacity: 0.5;' : '' %>">
+                                    <div class="menu-category">
+                                        <%= item.category %>
+                                    </div>
+                                    <h3 class="menu-name">
+                                        <%= item.item_name %>
+                                    </h3>
+
+                                    <div class="rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+
+                                    <div class="menu-footer">
+                                        <% if (discountPercent> 0) { %>
+                                            <div class="price-container">
+                                                <span class="original-price">₹<%= originalPrice %></span>
+                                                <span class="final-price">₹<%= finalPrice %></span>
+                                                <span class="discount-badge">
+                                                    <%= discountPercent %> % OFF
+                                                </span>
+                                            </div>
+                                            <% } else { %>
+                                                <div class="price-container">
+                                                    <span class="final-price">₹<%= finalPrice %></span>
+                                                </div>
+                                                <% } %>
+
+                                                    <% if (isAvailable) { %>
+                                                        <button class="btn-add" data-id="<%= item._id %>"
+                                                            data-name="<%= item.item_name %>"
+                                                            data-price="<%= finalPrice %>" data-image="<%= imageUrl %>"
+                                                            onclick="addToCart(this)">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                        <% } else { %>
+                                                            <button class="btn-add disabled" disabled
+                                                                style="background: #ccc; cursor: not-allowed;">
+                                                                <i class="fas fa-ban"></i>
+                                                            </button>
+                                                            <% } %>
+                                    </div>
+                                </div>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                                <h3>No items found in the menu.</h3>
+                            </div>
+                            <% } %>
+        </div>
+
+    </div>
+
+    <!-- Booking Modal Moved to Global Partial -->
+
+    <%- include('partials/footer') %>
+
+        <script src="/js/particles.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const particles = new Particles({
+                    selector: '.particles-canvas',
+                    color: '#9dc209', // Brand Primary Color
+                    size: 0.5,
+                    quantity: 80,
+                    staticity: 50,
+                    ease: 50
+                });
+            });
+        </script>

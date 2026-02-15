@@ -1,0 +1,223 @@
+<%- include('../../partials/admin/header') %>
+
+    <div class="admin-content-wrapper">
+        <div class="page-header mb-4">
+            <h2 class="page-title">Table Bookings</h2>
+            <p class="text-muted">Manage reservations and special requests.</p>
+        </div>
+
+        <% if (bookings && bookings.length> 0) { %>
+            <div class="bookings-grid">
+                <% bookings.forEach(booking=> { %>
+                    <div class="booking-card glass-card">
+
+                        <div class="booking-date-badge">
+                            <span class="day">
+                                <%= new Date(booking.date).getDate() %>
+                            </span>
+                            <span class="month">
+                                <%= new Date(booking.date).toLocaleString('default', { month: 'short' }).toUpperCase()
+                                    %>
+                            </span>
+                        </div>
+
+                        <div class="booking-details">
+                            <div class="time-slot">
+                                <i class="far fa-clock"></i>
+                                <%= booking.time %>
+                            </div>
+
+                            <h4 class="customer-name">
+                                <%= booking.name %>
+                            </h4>
+
+                            <div class="contact-info">
+                                <span><i class="fas fa-phone-alt"></i>
+                                    <%= booking.phone %>
+                                </span>
+                                <span class="guests"><i class="fas fa-user-friends"></i>
+                                    <%= booking.guests %> Guests
+                                </span>
+                            </div>
+
+                            <% if(booking.special_request) { %>
+                                <div class="special-request">
+                                    <i class="fas fa-quote-left"></i>
+                                    <%= booking.special_request %>
+                                </div>
+                                <% } %>
+                        </div>
+
+                        <div class="booking-actions">
+                            <% if (booking.status==='Pending' ) { %>
+                                <form action="/admin/booking/status" method="POST" class="d-flex gap-2 w-100">
+                                    <input type="hidden" name="bookingId" value="<%= booking._id %>">
+
+                                    <button type="submit" name="status" value="Rejected" class="btn-action reject"
+                                        title="Reject">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <button type="submit" name="status" value="Confirmed" class="btn-action confirm"
+                                        title="Confirm">
+                                        <i class="fas fa-check"></i> Confirm
+                                    </button>
+                                </form>
+                                <% } else { %>
+                                    <div class="status-display <%= booking.status.toLowerCase() %>">
+                                        <%= booking.status %>
+                                    </div>
+                                    <% } %>
+                        </div>
+
+                    </div>
+                    <% }) %>
+            </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="far fa-calendar-alt"></i></div>
+                    <h3>No Bookings</h3>
+                    <p>No table reservations yet.</p>
+                </div>
+                <% } %>
+    </div>
+
+    <style>
+        .bookings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .booking-card {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .booking-date-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f1f2f6;
+            padding: 8px 12px;
+            border-radius: 12px;
+            text-align: center;
+            line-height: 1;
+            color: #333;
+        }
+
+        .booking-date-badge .day {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .booking-date-badge .month {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--primary);
+        }
+
+        .booking-details {
+            padding: 25px 25px 15px;
+            flex: 1;
+        }
+
+        .time-slot {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .customer-name {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .guests {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .special-request {
+            background: #fff8e1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #8d6e63;
+            font-style: italic;
+        }
+
+        .booking-actions {
+            background: #fdfdfd;
+            padding: 15px 25px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-action {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-action.confirm {
+            background: var(--primary);
+            color: white;
+            flex: 2;
+        }
+
+        .btn-action.reject {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+
+        .status-display {
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .status-display.confirmed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-display.rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+    </style>
+
+    <%- include('../../partials/admin/footer') %>
