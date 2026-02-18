@@ -13,7 +13,8 @@
             </div>
             <div class="form-group" style="margin-bottom: 15px;">
                 <input type="tel" name="phone" placeholder="Mobile Number" required class="form-control"
-                    pattern="[0-9]{10}" title="10 digit mobile number"
+                    pattern="[0-9]{10}" title="10 digit mobile number" maxlength="10"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
                     value="<%= (typeof user !== 'undefined' && user) ? user.phone : '' %>">
             </div>
             <div class="form-group" style="margin-bottom: 15px;">
