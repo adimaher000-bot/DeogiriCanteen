@@ -186,4 +186,21 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+    /* Input Overrides for Modal (White Background) */
+    .modal-card .form-control {
+        background-color: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        color: #333;
+    }
+
+    .modal-card .form-control::placeholder {
+        color: #aaa;
+    }
+
+    .modal-card .form-control:focus {
+        background-color: #ffffff;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(157, 194, 9, 0.1);
+    }
 </style>
