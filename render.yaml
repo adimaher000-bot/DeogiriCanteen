@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: antigravity-cafe
+    name: deogiri-canteen
     env: node
     plan: free
     buildCommand: npm install

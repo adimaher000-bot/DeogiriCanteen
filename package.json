@@ -1,7 +1,7 @@
 {
-  "name": "antigravity-cafe",
+  "name": "deogiri-canteen",
   "version": "1.0.0",
-  "description": "Node.js conversion of the Cafe website",
+  "description": "Node.js conversion of the Deogiri Canteen website",
   "main": "server.js",
   "engines": {
     "node": "18.x"
