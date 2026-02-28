@@ -57,6 +57,16 @@ A Node.js web application for the Deogiri Canteen, conversion of the original we
 
 The system distinguishes between general users (students/teachers) and **administrators**. 
 
+### 🌐 Live Application & Demo
+
+You can view and test the live application here:
+- **Main Website URL:** `https://deogiricanteen.onrender.com`
+
+**Demo Student Account**
+You can log in and view the student/ordering side of the application with the following credentials:
+- **Email:** `demo@canteen.com`
+- **Password:** `Demo123!`
+
 ### Accessing the Admin Panel
 
 The admin dashboard is located at a separate dedicated route.
@@ -69,7 +79,7 @@ The admin dashboard is located at a separate dedicated route.
 
 ### Live System Admin Login 
 
-For the deployed version, you can log in using the following default credentials:
+For the deployed version, you can log in to the admin panel using the following default credentials:
 - **Email:** `admin@canteen.com`
 - **Password:** `admin123`
 
